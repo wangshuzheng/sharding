@@ -1,0 +1,46 @@
+SparkContext 
+
+SparkContext：通常而言，Driver Application的执行与输出都是通过 SparkContext 来完
+成的，在正式提交Application 之前，首先需要初始化SparkContext。SparkContext 隐
+藏了网络通信、分布式部署、消息通信、存储能力、计算能力、缓存、测量系统、文
+件服务、Web 服务等内容，应用程序开发者只需要使用SparkContext 提供的API 完成
+功能开发。SparkContext 内置的DAGScheduler 负责创建Job，将DAG 中的RDD 划
+分到不同的Stage，提交Stage 等功能。内置的TaskScheduler 负责资源的申请、任务
+的提交及请求集群对任务的调度等工作。
+
+DAG
+
+如果一个有向图无法从某个顶点出发	经过若干条边回到该点，则这个图是一个有向无环图。
+
+RDD
+创建：只能通过转换( transformation，如map/filter/groupBy/join等），从两种数据源中创建RDD：1）稳定存储中的数据；2）其他RDD。
+只读：状态不可变，不能修改
+分区：支持使RDD中的元素根据key来分区( partitioning)，保存到多个结点上。还原时只会重新计算丢失分区的数据，而不会影响整个系统。
+血缘：在RDD中叫血统( lineage)，即RDD有充足的信息关于它是如何从其他RDD产生而来的。
+持久化：支持将会被重用的RDD缓存(如in-memory或溢出到磁盘)
+延迟计算： transformations lazy类型，Spark也会延迟计算RDD，使其能够将转换管道化(pipeline transformation)
+操作：丰富的动作( action)，count/reduce/collect/save等。
+
+
+
+增加分区及存储结构（CopyAndWriteArrayList to LinkedList）后，性能提升明显
+
+
+SparkEnv：线程级别的上下文，存储运行时的重要组件的引用
+
+
+
+Spark中的另一个抽象就是能够被用于并行计算的共享变量. 默认的情况下, Spark并行运行一个函数是作为一组tasks在不同的节点上同时计算的, 
+这种情况下,他是通过分发每一个变量的拷贝到每个task中的.有时候,我们需要某些变量在tasks之间进行共享. 这里Spark支持两种共享变量
+
+Broadcast Variables 
+	– 广播变量缓存到各个节点的内存中，而不是每个 Task 
+	– 广播变量被创建后，能在集群中运行的任何函数调用 
+	– 广播变量是只读的，不能在被广播后修改 
+	– 对于大数据集的广播， Spark 尝试使用高效的广播算法来降低通信成本
+Accumulators 
+	– 只支持加法操作，可以高效地并行，用于实现计数器和变量求和 
+	– 只有驱动程序才能获取累加器的值
+	
+	
+	
